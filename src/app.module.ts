@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { validationSchema } from './config/validation.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
 import { AppGateway } from './socket.gateway';
 import { addTransactionalDataSource } from 'typeorm-transactional';
@@ -46,7 +46,7 @@ import { DataSource } from 'typeorm';
         return addTransactionalDataSource(new DataSource(options)); // 트랜잭셔널 데이터 소스 추가
       },
     }),
-    // AuthModule,
+    AuthModule,
     RedisModule,
   ],
   // controllers 배열은 이 모듈에 포함될 컨트롤러를 명시
