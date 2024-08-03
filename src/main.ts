@@ -10,7 +10,6 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 import { setSwagger } from './app.swagger';
 import { BusinessExceptionFilter } from './exception';
 
-// NestJS 애플리케이션을 설정하고 시작하기 위해 'bootstrap'이라는 비동기 함수를 정의
 async function bootstrap() {
   // 데이터베이스 작업에서 트랜잭션의 원자성을 보장하기 위해 트랜잭셔널 컨텍스트를 초기화
   initializeTransactionalContext();
@@ -22,15 +21,17 @@ async function bootstrap() {
 
   // 환경 또는 기타 외부 소스에서 구성 설정을 검색
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('SERVER_PORT') || 4000; // 지정되지 않은 경우 기본 포트 4000 사용
-  const env = configService.get<string>('SERVER_RUNTIME'); // 서버가 실행되는 환경
-  const serviceName = configService.get<string>('SERVER_SERVICE_NAME'); // 식별을 위한 서비스 이름
+  const port = configService.get<number>('SERVER_PORT') || 4000;
+  const env = configService.get<string>('SERVER_RUNTIME');
+  const serviceName = configService.get<string>('SERVER_SERVICE_NAME');
 
   // HTTPS를 위한 SSL 키 및 인증서의 경로 설정
   const keyPath = path.join(__dirname, '..', 'key.pem');
   const certPath = path.join(__dirname, '..', 'cert.pem');
 
+  // Swagger API 연결
   setSwagger(app);
+
   // 환경별 옵션을 사용하여 CORS를 활성화
   app.enableCors(corsOption(env));
 

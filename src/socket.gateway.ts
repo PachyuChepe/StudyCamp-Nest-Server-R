@@ -24,7 +24,7 @@ export class AppGateway
 
   afterInit(server: Server) {
     server.adapter(this.redisService.getAdapter());
-    console.log('✅ Redis adapter initialized successfully'); // 추가된 로그 메시지
+    console.log('✅ Redis adapter initialized successfully');
   }
 
   handleConnection(client: Socket, ...args: any[]) {

@@ -3,7 +3,6 @@ import Joi from 'joi';
 export const validationSchema = Joi.object({
   // ENV
   SERVER_RUNTIME: Joi.string().valid('local', 'test', 'prod').required(),
-  // SERVER_RUNTIME: Joi.string().valid('dev', 'prod').default('dev'),
   SERVER_PORT: Joi.number().required(),
   SERVER_SERVICE_NAME: Joi.string().required(),
 
