@@ -27,7 +27,7 @@ export class AppGateway
     console.log('✅ Redis adapter initialized successfully');
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket) {
     console.log('Client connected:', client.id);
   }
 

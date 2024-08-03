@@ -12,7 +12,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended', // Prettier 권장 설정 추가
-    // 'prettier/@typescript-eslint', // TypeScript와 Prettier 충돌 방지 설정
+    'prettier/@typescript-eslint', // TypeScript와 Prettier 충돌 방지 설정
     'google', // Google 스타일 가이드 추가
   ],
   root: true,
@@ -34,9 +34,16 @@ module.exports = {
     'max-len': 'off', // max-len 규칙 비활성화
     'prettier/prettier': [
       'error',
-      {},
       {
-        usePrettierrc: true,
+        singleQuote: true,
+        semi: true,
+        useTabs: false,
+        tabWidth: 2,
+        trailingComma: 'all',
+        printWidth: 80,
+        bracketSpacing: true,
+        endOfLine: 'auto',
+        quoteProps: 'consistent',
       },
     ],
     // 필요에 따라 추가적인 ESLint 규칙을 정의
