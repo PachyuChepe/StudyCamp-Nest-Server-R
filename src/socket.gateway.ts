@@ -1,4 +1,4 @@
-// socket.gateway.ts
+// src/socket.gateway.ts
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -27,7 +27,7 @@ export class AppGateway
     console.log('✅ Redis adapter initialized successfully');
   }
 
-  handleConnection(client: Socket) {
+  handleConnection(client: Socket, ..._args: any[]) {
     console.log('Client connected:', client.id);
   }
 
