@@ -1,3 +1,4 @@
+// socket.gateway.ts
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -23,6 +24,7 @@ export class AppGateway
 
   afterInit(server: Server) {
     server.adapter(this.redisService.getAdapter());
+    console.log('✅ Redis adapter initialized successfully'); // 추가된 로그 메시지
   }
 
   handleConnection(client: Socket, ...args: any[]) {

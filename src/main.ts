@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { corsOption, getNestOptions } from './app.options';
 import { ConfigService } from '@nestjs/config';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { setSwagger } from './app.swagger';
 import { BusinessExceptionFilter } from './exception';
 
 // NestJS 애플리케이션을 설정하고 시작하기 위해 'bootstrap'이라는 비동기 함수를 정의
@@ -29,6 +30,7 @@ async function bootstrap() {
   const keyPath = path.join(__dirname, '..', 'key.pem');
   const certPath = path.join(__dirname, '..', 'cert.pem');
 
+  setSwagger(app);
   // 환경별 옵션을 사용하여 CORS를 활성화
   app.enableCors(corsOption(env));
 
@@ -47,13 +49,13 @@ async function bootstrap() {
       .createServer(httpsOptions, app.getHttpAdapter().getInstance())
       .listen(port);
     console.log(
-      `HTTPS server running on\nruntime: ${env}\nport: ${port}\nserviceName: ${serviceName}`,
+      `✅ HTTPS server running on\n✅ runtime: ${env}\n✅ port: ${port}\n✅ serviceName: ${serviceName}`,
     );
   } else {
     // SSL 파일을 찾지 못한 경우 애플리케이션을 HTTP로 시작
     await app.listen(port);
     console.log(
-      `HTTP server running on\nruntime: ${env}\nport: ${port}\nserviceName: ${serviceName}`,
+      `✅ HTTP server running on\n✅ runtime: ${env}\n✅ port: ${port}\n✅ serviceName: ${serviceName}`,
     );
   }
 }
