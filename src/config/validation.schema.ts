@@ -17,4 +17,15 @@ export const validationSchema = Joi.object({
   JWT_SECRET: Joi.string().required(),
   ACCESS_TOKEN_EXPIRY: Joi.string().required(),
   REFRESH_TOKEN_EXPIRY: Joi.string().required(),
+
+  // Redis
+  REDIS_ID: Joi.string().required(),
+  REDIS_PW: Joi.string().required(),
+  REDIS_HOST: Joi.string().required(),
+  REDIS_PORT: Joi.string().required(),
+
+  // Swagger API
+  SERVICE_NAME: Joi.string().required(),
+  SWAGGER_ID: Joi.string().required(),
+  SWAGGER_PW: Joi.string().required(),
 });
