@@ -1,0 +1,24 @@
+@domain = https://localhost:4000
+
+###
+# 사용자 회원가입
+POST {{domain}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "pachyuchepe",
+  "email": "user1@gmail.com",
+  "password": "12345",
+	"phone": "010-1234-5678",
+	"role": "admin"
+}
+
+###
+# 사용자 로그인
+POST {{domain}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "user1@gmail.com",
+  "password": "12345"
+}
