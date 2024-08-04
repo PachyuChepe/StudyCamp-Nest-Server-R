@@ -22,6 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { JwtStrategy } from './strategies';
     TokenBlacklistRepository,
 
     JwtStrategy,
+    JwtAuthGuard,
   ],
   exports: [
     UserService,

@@ -37,14 +37,13 @@ Content-Type: application/json
   "refreshToken": "{{refreshToken}}"
 }
 
+###
+# 사용자 회원탈퇴
+DELETE {{domain}}/auth/delete
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
-
-# ###
-# # 사용자 회원탈퇴
-# DELETE {{domain}}/auth/delete
-# Content-Type: application/json
-
-# {
-#   "userId": "{{userId}}",
-#   "password": "12345"
-# }
+{
+  "userId": "{{loginToken.response.body.user.id}}",
+  "password": "12345"
+}

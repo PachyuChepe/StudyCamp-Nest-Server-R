@@ -5,7 +5,9 @@ import { BaseEntity } from '../../common/entity';
 
 @Entity()
 export class AccessToken extends BaseEntity {
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.accessToken, {
+    onDelete: 'CASCADE',
+  })
   user: Relation<User>;
 
   @Column()

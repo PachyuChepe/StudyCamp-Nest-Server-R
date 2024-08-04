@@ -3,7 +3,7 @@ import { AccessTokenRepository, UserRepository } from '../repositories';
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as argon2 from 'argon2';
 import { User } from '../entities';
-import { CreateUserDto } from '../dto';
+import { CreateUserDto, DeleteUserDto } from '../dto';
 import { BusinessException } from '../../exception';
 
 @Injectable()
@@ -27,6 +27,21 @@ export class UserService {
     }
     const hashedPassword = await argon2.hash(dto.password);
     return this.userRepo.createUser(dto, hashedPassword);
+  }
+
+  async deleteUser(dto: DeleteUserDto): Promise<void> {
+    const user = await this.userRepo.findOne({ where: { id: dto.userId } });
+    if (!user || !(await argon2.verify(user.password, dto.password))) {
+      throw new BusinessException(
+        'auth',
+        'invalid-credentials',
+        'Invalid credentials',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    await this.userRepo.remove(user);
+    this.logger.log(`User ${dto.userId} deleted`);
   }
 
   async validateUser(id: string, jti: string): Promise<User> {
@@ -53,27 +68,5 @@ export class UserService {
       );
     }
     return user;
-  }
-
-  async deleteUser(userId: string, password: string): Promise<void> {
-    const user = await this.userRepo.findOneBy({ id: userId });
-    if (!user) {
-      throw new BusinessException(
-        'user',
-        'user-not-found',
-        'User not found',
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    const isPasswordValid = await argon2.verify(user.password, password);
-    if (!isPasswordValid) {
-      throw new BusinessException(
-        'auth',
-        'invalid-password',
-        'Invalid password',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-    await this.userRepo.delete(userId);
   }
 }

@@ -1,5 +1,5 @@
 // src/auth/controllers/auth.controller.ts
-import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService, UserService } from '../services';
 import {
   CreateUserDto,
@@ -8,8 +8,9 @@ import {
   RefreshReqDto,
   SignupResDto,
   LogoutReqDto,
-  DeleteAccountReqDto,
+  DeleteUserDto,
 } from '../dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -58,8 +59,9 @@ export class AuthController {
     return this.authService.logout(dto.accessToken, dto.refreshToken);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('delete')
-  async deleteAccount(@Body() dto: DeleteAccountReqDto): Promise<void> {
-    await this.userService.deleteUser(dto.userId, dto.password);
+  async delete(@Body() deleteUserDto: DeleteUserDto): Promise<void> {
+    await this.userService.deleteUser(deleteUserDto);
   }
 }

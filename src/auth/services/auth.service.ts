@@ -34,29 +34,32 @@ export class AuthService {
     req: RequestInfo,
   ): Promise<LoginResDto> {
     const user = await this.validateUser(email, plainPassword);
-    const payload: TokenPayload = this.createTokenPayload(user.id);
 
-    const [accessToken, refreshToken] = await Promise.all([
-      this.createAccessToken(user, payload),
-      this.createRefreshToken(user, payload),
-    ]);
+    // 기존 액세스 토큰 확인
+    const existingAccessToken = await this.accessTokenRepository.findOne({
+      where: { user, isRevoked: false },
+    });
 
-    const { ip, endpoint, ua } = req;
-    await this.accessLogRepository.createAccessLog(user, ua, endpoint, ip);
+    if (existingAccessToken) {
+      try {
+        // 토큰 검증
+        await this.jwtService.verifyAsync(existingAccessToken.token, {
+          secret: this.configService.get<string>('JWT_SECRET'),
+        });
+        throw new BusinessException(
+          'auth',
+          'already-logged-in',
+          'User is already logged in',
+          HttpStatus.BAD_REQUEST,
+        );
+      } catch (error) {
+        if (error.name !== 'TokenExpiredError') {
+          throw error;
+        }
+        // 토큰이 만료된 경우 계속 진행하여 새로운 토큰 발급
+      }
+    }
 
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-      },
-    };
-  }
-
-  async loginOauth(user: User, req: RequestInfo): Promise<LoginResDto> {
     const payload: TokenPayload = this.createTokenPayload(user.id);
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -80,14 +83,47 @@ export class AuthService {
   }
 
   async logout(accessToken: string, refreshToken: string): Promise<void> {
-    const [jtiAccess, jtiRefresh] = await Promise.all([
-      this.jwtService.verifyAsync(accessToken, {
+    let jtiAccess: any;
+    let jtiRefresh: any;
+
+    try {
+      jtiAccess = await this.jwtService.verifyAsync(accessToken, {
         secret: this.configService.get<string>('JWT_SECRET'),
-      }),
-      this.jwtService.verifyAsync(refreshToken, {
+      });
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        // 토큰이 만료된 경우에도 계속 진행하여 블랙리스트에 추가
+        jtiAccess = this.jwtService.decode(accessToken) as any;
+      } else {
+        throw error;
+      }
+    }
+
+    try {
+      jtiRefresh = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_SECRET'),
-      }),
-    ]);
+      });
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        // 토큰이 만료된 경우에도 계속 진행하여 블랙리스트에 추가
+        jtiRefresh = this.jwtService.decode(refreshToken) as any;
+      } else {
+        throw error;
+      }
+    }
+
+    // 액세스 토큰 블랙리스트 확인
+    const isAccessTokenBlacklisted =
+      await this.tokenBlacklistService.isTokenBlacklisted(jtiAccess.jti);
+    if (isAccessTokenBlacklisted) {
+      throw new BusinessException(
+        'auth',
+        'already-logged-out',
+        'User is already logged out',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     await Promise.all([
       this.addToBlacklist(
         accessToken,

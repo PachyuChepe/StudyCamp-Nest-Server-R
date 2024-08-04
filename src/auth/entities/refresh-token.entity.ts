@@ -5,7 +5,9 @@ import { BaseEntity } from '../../common/entity';
 
 @Entity()
 export class RefreshToken extends BaseEntity {
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, (user) => user.refreshToken, {
+    onDelete: 'CASCADE',
+  })
   user: Relation<User>;
 
   @Column()
