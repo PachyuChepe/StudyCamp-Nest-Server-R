@@ -17,7 +17,13 @@ export class UserRepository extends Repository<User> {
   }
 
   async findOneByEmail(email: string): Promise<User> {
+    console.log('Finding user by email:', email);
     return this.repo.findOneBy({ email });
+  }
+
+  async findOneBy(options: any): Promise<User> {
+    console.log('Finding user with options:', options);
+    return this.repo.findOneBy(options);
   }
 
   async createUser(dto: CreateUserDto, hashedPassword: string): Promise<User> {

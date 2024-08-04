@@ -54,4 +54,26 @@ export class UserService {
     }
     return user;
   }
+
+  async deleteUser(userId: string, password: string): Promise<void> {
+    const user = await this.userRepo.findOneBy({ id: userId });
+    if (!user) {
+      throw new BusinessException(
+        'user',
+        'user-not-found',
+        'User not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const isPasswordValid = await argon2.verify(user.password, password);
+    if (!isPasswordValid) {
+      throw new BusinessException(
+        'auth',
+        'invalid-password',
+        'Invalid password',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    await this.userRepo.delete(userId);
+  }
 }

@@ -1,4 +1,7 @@
 @domain = https://localhost:4000
+@accessToken = {{loginToken.response.body.$.accessToken}}
+@refreshToken = {{loginToken.response.body.$.refreshToken}}
+
 
 ###
 # 사용자 회원가입
@@ -7,7 +10,7 @@ Content-Type: application/json
 
 {
   "name": "pachyuchepe",
-  "email": "user1@gmail.com",
+  "email": "user4@gmail.com",
   "password": "12345",
 	"phone": "010-1234-5678",
 	"role": "admin"
@@ -15,10 +18,33 @@ Content-Type: application/json
 
 ###
 # 사용자 로그인
+# @name loginToken
 POST {{domain}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
+  "email": "user4@gmail.com",
   "password": "12345"
 }
+
+###
+# 사용자 로그아웃
+POST {{domain}}/auth/logout
+Content-Type: application/json
+
+{
+  "accessToken": "{{accessToken}}",
+  "refreshToken": "{{refreshToken}}"
+}
+
+
+
+# ###
+# # 사용자 회원탈퇴
+# DELETE {{domain}}/auth/delete
+# Content-Type: application/json
+
+# {
+#   "userId": "{{userId}}",
+#   "password": "12345"
+# }

@@ -1,5 +1,5 @@
 // src/auth/controllers/auth.controller.ts
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req } from '@nestjs/common';
 import { AuthService, UserService } from '../services';
 import {
   CreateUserDto,
@@ -7,6 +7,8 @@ import {
   LoginResDto,
   RefreshReqDto,
   SignupResDto,
+  LogoutReqDto,
+  DeleteAccountReqDto,
 } from '../dto';
 
 @Controller('auth')
@@ -49,5 +51,15 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Body() dto: RefreshReqDto): Promise<string> {
     return this.authService.refreshAccessToken(dto.refreshToken);
+  }
+
+  @Post('logout')
+  async logout(@Body() dto: LogoutReqDto): Promise<void> {
+    return this.authService.logout(dto.accessToken, dto.refreshToken);
+  }
+
+  @Delete('delete')
+  async deleteAccount(@Body() dto: DeleteAccountReqDto): Promise<void> {
+    await this.userService.deleteUser(dto.userId, dto.password);
   }
 }

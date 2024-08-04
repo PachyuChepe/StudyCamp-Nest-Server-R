@@ -91,13 +91,13 @@ export class AuthService {
     await Promise.all([
       this.addToBlacklist(
         accessToken,
-        jtiAccess,
+        jtiAccess.jti,
         'access',
         'ACCESS_TOKEN_EXPIRY',
       ),
       this.addToBlacklist(
         refreshToken,
-        jtiRefresh,
+        jtiRefresh.jti,
         'refresh',
         'REFRESH_TOKEN_EXPIRY',
       ),
@@ -113,6 +113,8 @@ export class AuthService {
         },
       );
 
+      console.log('Payload from refreshToken:', payload);
+
       const user = await this.userRepository.findOneBy({ id: payload.sub });
       if (!user) {
         throw new BusinessException(
@@ -125,6 +127,7 @@ export class AuthService {
 
       return this.createAccessToken(user, payload as TokenPayload);
     } catch (error) {
+      console.error('Error refreshing access token:', error);
       throw new BusinessException(
         'auth',
         'invalid-refresh-token',
@@ -135,11 +138,13 @@ export class AuthService {
   }
 
   createTokenPayload(userId: string): TokenPayload {
-    return {
+    const payload = {
       sub: userId,
       iat: Math.floor(Date.now() / 1000),
       jti: uuidv4(),
     };
+    console.log('Created token payload:', payload);
+    return payload;
   }
 
   async createAccessToken(user: User, payload: TokenPayload): Promise<string> {
