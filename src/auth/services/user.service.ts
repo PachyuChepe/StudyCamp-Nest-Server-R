@@ -16,7 +16,7 @@ export class UserService {
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<User> {
-    const user = await this.userRepo.findOneByEmail(dto.email);
+    const user = await this.userRepo.findOneByEmail(dto.email, 'local');
     if (user) {
       throw new BusinessException(
         'user',

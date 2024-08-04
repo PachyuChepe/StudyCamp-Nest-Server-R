@@ -16,12 +16,16 @@ import {
   UserRepository,
 } from './repositories';
 import { AuthService, TokenBlacklistService, UserService } from './services';
-import { AuthController } from './controllers';
+import {
+  AuthController,
+  GoogleAuthController,
+  KakaoAuthController,
+} from './controllers';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategies';
+import { JwtStrategy, GoogleStrategy, KakaoStrategy } from './strategies';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
@@ -47,7 +51,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       TokenBlacklist,
     ]),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, GoogleAuthController, KakaoAuthController],
   providers: [
     UserService,
     AuthService,
@@ -61,6 +65,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
     JwtStrategy,
     JwtAuthGuard,
+    GoogleStrategy,
+    KakaoStrategy,
   ],
   exports: [
     UserService,

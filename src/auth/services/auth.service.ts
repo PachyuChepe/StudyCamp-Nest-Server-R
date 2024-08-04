@@ -183,6 +183,78 @@ export class AuthService {
     return payload;
   }
 
+  async saveGoogleUser(profile: any): Promise<User> {
+    const { email, firstName, lastName, picture, id } = profile;
+    let user = await this.userRepository.findOneBy({
+      email,
+      provider: 'google',
+    });
+
+    if (!user) {
+      user = new User();
+      user.email = email;
+      user.name = `${firstName} ${lastName}`;
+      user.password = '';
+      // user.profilePicture = picture;
+      user.role = 'user';
+      user.phone = ''; //
+      user.provider = 'google'; // 제공자 설정
+      user.providerId = id; // 제공자 ID 설정
+      await this.userRepository.save(user);
+    }
+
+    return user;
+  }
+
+  async handleGoogleCallback(
+    profile: any,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const user = await this.saveGoogleUser(profile);
+
+    const payload: TokenPayload = this.createTokenPayload(user.id);
+
+    const accessToken = await this.createAccessToken(user, payload);
+    const refreshToken = await this.createRefreshToken(user, payload);
+
+    return { accessToken, refreshToken };
+  }
+
+  async saveKakaoUser(profile: any): Promise<User> {
+    const { id, username, email, profileImage } = profile.user;
+
+    let user = await this.userRepository.findOneBy({
+      email,
+      provider: 'kakao',
+    });
+
+    if (!user) {
+      user = new User();
+      user.email = email;
+      user.name = username;
+      user.password = '';
+      user.role = 'user';
+      user.phone = '';
+      user.provider = 'kakao'; // 제공자 설정
+      user.providerId = id; // 제공자 ID 설정
+      await this.userRepository.save(user);
+    }
+
+    return user;
+  }
+
+  async handleKakaoCallback(
+    profile: any,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const user = await this.saveKakaoUser(profile);
+
+    const payload: TokenPayload = this.createTokenPayload(user.id);
+
+    const accessToken = await this.createAccessToken(user, payload);
+    const refreshToken = await this.createRefreshToken(user, payload);
+
+    return { accessToken, refreshToken };
+  }
+
   async createAccessToken(user: User, payload: TokenPayload): Promise<string> {
     const expiresIn = this.configService.get<string>('ACCESS_TOKEN_EXPIRY');
     const token = this.jwtService.sign(payload, { expiresIn });

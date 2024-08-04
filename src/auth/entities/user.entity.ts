@@ -21,6 +21,12 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 50 })
   phone: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  provider: string; // 소셜 로그인 제공자 필드 추가
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  providerId: string; // 소셜 로그인 제공자 ID 필드 추가
+
   @Column({ type: 'varchar', length: 50 })
   role: UserRole;
 

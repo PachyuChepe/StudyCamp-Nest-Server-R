@@ -30,4 +30,13 @@ export const validationSchema = Joi.object({
   SERVICE_NAME: Joi.string().required(),
   SWAGGER_ID: Joi.string().required(),
   SWAGGER_PW: Joi.string().required(),
+
+  // Google-Login
+  GOOGLE_CLIENT_ID: Joi.string().required(),
+  GOOGLE_CLIENT_SECRET: Joi.string().required(),
+  GOOGLE_CALLBACK_URL: Joi.string().required(),
+
+  // Kakao-Login
+  KAKAO_CLIENT_ID: Joi.string().required(),
+  KAKAO_CALLBACK_URL: Joi.string().required(),
 });

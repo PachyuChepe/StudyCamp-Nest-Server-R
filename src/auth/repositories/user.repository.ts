@@ -16,9 +16,9 @@ export class UserRepository extends Repository<User> {
     super(repo.target, repo.manager, repo.queryRunner);
   }
 
-  async findOneByEmail(email: string): Promise<User> {
+  async findOneByEmail(email: string, provider?: string): Promise<User> {
     console.log('Finding user by email:', email);
-    return this.repo.findOneBy({ email });
+    return this.repo.findOneBy({ email, provider });
   }
 
   async findOneBy(options: any): Promise<User> {
